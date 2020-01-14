@@ -1,27 +1,25 @@
-import React, { ChangeEvent, FC, useEffect, useCallback, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import './App.css';
-import { format, getDate, getMonth, getWeekOfMonth, lastDayOfMonth, startOfMonth, endOfMonth, formatRelative, subDays } from 'date-fns'
+import { format, getDate, getMonth, startOfMonth, endOfMonth } from 'date-fns'
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx'
-
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
-const App: React.FC = () => {
+import CalendarDrawer from './components/CalendarDrawer';
 
+const App: FC = () => {
 
   // Get current date
-  let todayDate = getDate(new Date())
   let todayMonth = getMonth(new Date())
 
   // Use state part
   const [monthIndex, setMonthIndex] = useState(todayMonth)
   const [nextDisabled, setNextDisabled] = useState(false)
   const [backDisabled, setBackDisabled] = useState(false)
-
-  console.log('Last Day of month is: ', format(lastDayOfMonth(new Date()), 'ii'))
-  console.log('Last Day of month is: ', format(lastDayOfMonth(new Date()), 'iii'))
-  console.log(format(new Date(), 'iiii'))
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState()
+  const [tasks, setTasks] = useState<TodoTask[]>([])
+  const [allMonth, setAllMonth] = useState([])
   const useStyles = makeStyles(theme => ({
     mainButton: {
       bottom: theme.spacing(2),
@@ -53,14 +51,14 @@ const App: React.FC = () => {
       visibility: "hidden",
     },
     firstWeek: {
-      justifyContent:'flex-end'
+      justifyContent: 'flex-end'
     }
   }));
   const classes = useStyles();
 
   // Date Constant
   const monthList = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-  const DayList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const DayList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
   const toggleMonth = (itr: number) => {
     setMonthIndex(monthIndex + itr)
@@ -79,22 +77,21 @@ const App: React.FC = () => {
   // init page
   useEffect(() => {
     toggleMonth(0)
-    console.log('test count')
+    console.log('test count', selectedDate, ' ', format(new Date(), 'dd MMMM yyyy'))
     // TODO please fix this
   }, [])
 
 
-
-  // month cal
-  function calMonth() {
+  // month cal TODO too many call
+  const calMonth = () => {
     let monthDate = []
     for (let i = 0; i < 12; i++) {
       let dayOfStartMonth = format(startOfMonth(new Date(2020, i, 1)), 'iii')
       let dateEndOfMonth = getDate(endOfMonth(new Date(2020, i, 1)))
-      monthDate.push (
+      monthDate.push(
         // month content
         <div key={monthList[i]} className={monthIndex === i ? classes.monthStyle : classes.monthStyleHidden}>
-            {calWeek(dayOfStartMonth, dateEndOfMonth)}
+          {calWeek(i, dayOfStartMonth, dateEndOfMonth)}
         </div>
       )
     }
@@ -102,8 +99,8 @@ const App: React.FC = () => {
   }
 
   // input eg Mon, TUe
-  function calWeek(day: string, lastDate: number) {
-    lastDate+=1
+  function calWeek(curMonth: number, day: string, lastDate: number) {
+    lastDate += 1
     let curDate = 1
     let emptyDate = []
     let curWeek = []
@@ -111,30 +108,71 @@ const App: React.FC = () => {
     for (let i = 0; i < DayList.indexOf(day); i++) {
       // if sunday = no free li if Tue = 2 free li
       emptyDate.push(
-        <li></li>
+        <li key={'space-' + i}></li>
       )
     }
     for (let i = 0; i < 7 - emptyDate.length; i++) {
+      let tempDate = curDate
       curWeek.push(
         // Todo mark
-        <li><span>{curDate}</span></li>
+        <li
+          key={monthList[curMonth] + '-date-' + curDate}
+          className={tasks.find(e => (e.id === format(new Date(2020, curMonth, tempDate), 'dd MMMM yyyy'))) ? "mark" : ""}
+          onClick={() => handleClickDate(tempDate, curMonth)
+          }><span>{curDate}</span><span className="tooltip-text">Chinese New Year</span></li>
       )
-      curDate+=1
+      curDate += 1
     }
-    week.push(<ul className={classes.firstWeek}>{curWeek}</ul>)
+    week.push(<ul key={monthList[curMonth] + '-week-' + week.length + 1} className={classes.firstWeek}>{curWeek}</ul>)
     while (curDate < lastDate) {
+      let a = (tasks.find(e => e.id === selectedDate))
+
       curWeek = []
       for (let i = 0; i < 7 && curDate < lastDate; i++) {
+        let tempDate = curDate
         curWeek.push(
           // Todo mark
-          <li><span>{curDate}</span></li>
-          )
-          curDate+=1
-        }
-        week.push(<ul>{curWeek}</ul>)
+          <li
+            key={monthList[curMonth] + '-date-' + curDate}
+            className={tasks.find(e => (e.id === format(new Date(2020, curMonth, tempDate), 'dd MMMM yyyy'))) ? "mark" : ""}
+            onClick={() => handleClickDate(tempDate, curMonth)}
+          ><span>{curDate}</span><span className="tooltip-text">{tasks.find(e => e.id === selectedDate)?.description}</span></li>
+        )
+        curDate += 1
       }
+      week.push(<ul key={monthList[curMonth] + '-week-' + week.length + 1}>{curWeek}</ul>)
+    }
     return week
   }
+
+  interface TodoTask {
+    id: string;
+    description: string;
+    isDone: boolean;
+    createdAt: string;
+    marked: boolean
+  }
+
+  const addTask = (taskData: Pick<TodoTask, 'description'>) => {
+    console.log(selectedDate)
+    setTasks([
+      ...tasks,
+      {
+        ...taskData,
+        id: selectedDate,
+        createdAt: '',
+        isDone: false,
+        marked: true
+      },
+    ]);
+    setIsDrawerOpen(false)
+  };
+
+  function handleClickDate(date: number, month: number) {
+    setSelectedDate(format(new Date(2020, month, date), 'dd MMMM yyyy'))
+    setIsDrawerOpen(true)
+  }
+  let alltestMonth = calMonth()
 
   return (
     <div className="calendar">
@@ -145,16 +183,22 @@ const App: React.FC = () => {
       </div>
       <div className="container">
         <ul className="firstweek">
-          <li><span>Sunday</span></li>
           <li><span>Monday</span></li>
           <li><span>Tuesday</span></li>
           <li><span>Wednesday</span></li>
           <li><span>Thursday</span></li>
           <li><span>Friday</span></li>
           <li><span>Saturday</span></li>
+          <li><span>Sunday</span></li>
         </ul>
-        {calMonth()}
+        {alltestMonth}
       </div>
+      <CalendarDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        selectedDate={selectedDate}
+        onSave={addTask}
+      />
     </div>
   );
 }
