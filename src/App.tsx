@@ -22,7 +22,7 @@ const App: FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState()
   const [tasks, setTasks] = useState<TodoTask[]>([])
-  const [allMonth, setAllMonth] = useState<any[]>([])
+  const [allMonth, setAllMonth] = useState([])
   const [currentDesc, setCurrentDesc] = useState('')
 
   const useStyles = makeStyles(theme => ({
@@ -85,13 +85,13 @@ const App: FC = () => {
 
   // init page
   useEffect(() => {
-    setAllMonth(calMonth())
     toggleMonth(0)
+    console.log('test count', selectedDate, ' ', format(new Date(), 'dd MMMM yyyy'))
     // TODO please fix this
   }, [])
 
-  useEffect(() => {
-  })
+
+  
   // month cal TODO too many call
   const calMonth = () => {
     let monthDate = []
@@ -100,23 +100,21 @@ const App: FC = () => {
       let dateEndOfMonth = getDate(endOfMonth(new Date(2020, i, 1)))
       monthDate.push(
         // month content
-        <div key={monthList[i]} className={classes.monthStyleHidden}>
+        <div key={monthList[i]} className={monthIndex === i ? classes.monthStyle : classes.monthStyleHidden}>
           {calWeek(i, dayOfStartMonth, dateEndOfMonth)}
         </div>
       )
-      console.log(monthDate)
     }
     return monthDate
   }
 
   // input eg Mon, TUe
-  const calWeek = (curMonth: number, day: string, lastDate: number) => {
+  function calWeek(curMonth: number, day: string, lastDate: number) {
     lastDate += 1
     let curDate = 1
     let emptyDate = []
     let curWeek = []
     let week = []
-    console.log('test')
     for (let i = 0; i < DayList.indexOf(day); i++) {
       // if sunday = no free li if Tue = 2 free li
       emptyDate.push(
@@ -185,6 +183,7 @@ const App: FC = () => {
     setSelectedDate(format(new Date(2020, month, date), 'dd MMMM yyyy'))
     setIsDialogOpen(true)
   }
+  const alltestMonth = calMonth()
 
   return (
     <div className="calendar">
@@ -199,7 +198,7 @@ const App: FC = () => {
       </AppBar>
 
       <div className="container">
-        {allMonth}
+        {alltestMonth}
       </div>
       <CalendarDialog
         isOpen={isDialogOpen}
