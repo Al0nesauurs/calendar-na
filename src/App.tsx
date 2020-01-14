@@ -44,22 +44,25 @@ const App: React.FC = () => {
     hiddenButton: {
       visibility: "hidden"
     },
-
+    monthStyle: {
+      visibility: "visible",
+      position: "fixed",
+    },
+    monthStyleHidden: {
+      position: "fixed",
+      visibility: "hidden",
+    },
     firstWeek: {
       justifyContent:'flex-end'
     }
   }));
   const classes = useStyles();
-  console.log(format(new Date(), 'iii'))
-  console.log(getDate(new Date()))
-  console.log(getMonth(new Date(2012, 1, 29)))
-  console.log(getWeekOfMonth(new Date()))
 
   // Date Constant
   const monthList = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
   const DayList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-  const toggleMonth = useCallback((itr: number) => {
+  const toggleMonth = (itr: number) => {
     setMonthIndex(monthIndex + itr)
     if (monthIndex + itr < 1) {
       setBackDisabled(true)
@@ -71,7 +74,7 @@ const App: React.FC = () => {
       setBackDisabled(false)
       setNextDisabled(false)
     }
-  }, [])
+  }
 
   // init page
   useEffect(() => {
@@ -84,14 +87,13 @@ const App: React.FC = () => {
 
   // month cal
   function calMonth() {
-    console.log('day ', format(startOfMonth(new Date(2020, 1, 1)), 'iii'))
     let monthDate = []
     for (let i = 0; i < 12; i++) {
       let dayOfStartMonth = format(startOfMonth(new Date(2020, i, 1)), 'iii')
       let dateEndOfMonth = getDate(endOfMonth(new Date(2020, i, 1)))
-      monthDate[i] = (
+      monthDate.push (
         // month content
-        <div key={monthList[i]}>
+        <div key={monthList[i]} className={monthIndex === i ? classes.monthStyle : classes.monthStyleHidden}>
             {calWeek(dayOfStartMonth, dateEndOfMonth)}
         </div>
       )
@@ -152,41 +154,6 @@ const App: React.FC = () => {
           <li><span>Saturday</span></li>
         </ul>
         {calMonth()}
-        {/* <ul>
-          <li><span>5</span></li>
-          <li><span>6</span></li>
-          <li><span>7</span></li>
-          <li className="today"><span>8</span></li>
-          <li><span>9</span></li>
-          <li><span>10</span></li>
-          <li><span>11</span></li>
-        </ul>
-        <ul>
-          <li><span>12</span></li>
-          <li><span>13</span></li>
-          <li><span>14</span></li>
-          <li><span>15</span></li>
-          <li><span>16</span></li>
-          <li><span>17</span></li>
-          <li><span>18</span></li>
-        </ul>
-        <ul>
-          <li><span>19</span></li>
-          <li><span>20</span></li>
-          <li><span>21</span></li>
-          <li><span>22</span></li>
-          <li><span>23</span></li>
-          <li><span>24</span></li>
-          <li className="mark"><span>25</span> <span className="tooltip-text">Chinese New Year</span></li>
-        </ul>
-        <ul>
-          <li className="mark"><span>26</span> <span className="tooltip-text">Chinese New Year</span></li>
-          <li className="mark"><span>27</span> <span className="tooltip-text">Chinese New Year</span></li>
-          <li><span>28</span></li>
-          <li><span>29</span></li>
-          <li><span>30</span></li>
-          <li><span>31</span></li>
-        </ul> */}
       </div>
     </div>
   );
