@@ -1,17 +1,17 @@
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
-import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import React, { ChangeEventHandler, FC, useState } from 'react';
+import Dialog from '@material-ui/core/Dialog';
 
 const useStyles = makeStyles(theme => ({
-  drawer: {
-    width: theme.spacing(40),
+  dialog: {
+    width: theme.spacing(100),
   },
-  drawerContent: {
+  dialogContent: {
     padding: theme.spacing(2, 3),
   },
   buttonContainer: {
@@ -21,14 +21,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-interface CalendarDrawerProps {
+interface CalendarDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (data: { description: string }) => void;
   selectedDate: string;
 }
 
-const CalendarDrawer: FC<CalendarDrawerProps> = props => {
+const CalendarDialog: FC<CalendarDialogProps> = props => {
   const { isOpen, onClose, onSave, selectedDate } = props;
   const classes = useStyles(props);
   const [description, setDescription] = useState('');
@@ -37,22 +37,19 @@ const CalendarDrawer: FC<CalendarDrawerProps> = props => {
     setDescription(event.target.value);
 
   return (
-    <Drawer
-      anchor="right"
-      classes={{ paper: classes.drawer }}
-      SlideProps={{
-        onEnter: () => {
-          setDescription('');
-        },
-      }}
+    <Dialog
+      classes={{ paper: classes.dialog }}
       open={isOpen}
+      onEnter = {() => {
+        setDescription('')
+      }}
     >
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6">{selectedDate}</Typography>
         </Toolbar>
       </AppBar>
-      <div className={classes.drawerContent}>
+      <div className={classes.dialogContent}>
         <TextField
           fullWidth
           multiline
@@ -76,8 +73,8 @@ const CalendarDrawer: FC<CalendarDrawerProps> = props => {
           </Button>
         </div>
       </div>
-    </Drawer>
+    </Dialog >
   );
 };
 
-export default CalendarDrawer;
+export default CalendarDialog;
