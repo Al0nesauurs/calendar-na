@@ -22,19 +22,12 @@ const App: FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState()
   const [tasks, setTasks] = useState<TodoTask[]>([])
-  const [allMonth, setAllMonth] = useState([])
-  const [currentDesc, setCurrentDesc] = useState('')
 
   const useStyles = makeStyles(theme => ({
-    mainButton: {
-      bottom: theme.spacing(2),
-      right: theme.spacing(2),
-      position: 'fixed',
-    },
     calendarHeader: {
       display: "flex",
       alignContent: "center",
-      justifyContent: "center"
+      justifyContent: "center",
     },
     calendarHeaderContent: {
       width: "200px",
@@ -54,10 +47,12 @@ const App: FC = () => {
       visibility: "visible",
       position: "fixed",
       backgroundColor: "#C3DEF9",
+      display: "inline",
     },
     monthStyleHidden: {
       position: "fixed",
-      visibility: "hidden",
+      display: "inline",
+      visibility: "hidden"
     },
     firstWeek: {
       justifyContent: 'flex-end'
@@ -98,8 +93,7 @@ const App: FC = () => {
       let dayOfStartMonth = format(startOfMonth(new Date(2020, i, 1)), 'iii')
       let dateEndOfMonth = getDate(endOfMonth(new Date(2020, i, 1)))
       monthDate.push(
-        // month content
-        <div key={monthList[i]} className={monthIndex === i ? classes.monthStyle : classes.monthStyleHidden}>
+        <div key={monthList[i]} className={(monthIndex === i ? classes.monthStyle : classes.monthStyleHidden)+ ' container'}>
           {calWeek(i, dayOfStartMonth, dateEndOfMonth)}
         </div>
       )
@@ -124,7 +118,6 @@ const App: FC = () => {
       let tempDate = curDate
       let task = tasks.find(e => (e.id === format(new Date(2020, curMonth, tempDate), 'dd MMMM yyyy')))
       curWeek.push(
-        // Todo mark
         <li
           key={monthList[curMonth] + '-date-' + curDate}
           className={task && task.description.length > 0 ? "mark" : ""}
@@ -202,7 +195,7 @@ const App: FC = () => {
   const alltestMonth = calMonth()
   return (
     <div className="calendar">
-      <AppBar position="static" className={classes.calendarHeader}>
+      <AppBar position="static">
         <Toolbar className={classes.calendarHeader}>
           <ArrowBackIosIcon className={backDisabled ? classes.hiddenButton : classes.calendarBack} onClick={() => { toggleMonth(-1) }} />
           <Typography variant="h6">

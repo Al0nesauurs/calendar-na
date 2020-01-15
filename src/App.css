@@ -1,6 +1,8 @@
 ul {
   display: flex;
-  padding-left: 0px;
+  padding: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   list-style-type: none;
 }
 
@@ -11,8 +13,8 @@ span {
 
 
 li {
-  width: 80px;
-  line-height: 80px;
+  width: 90px;
+  line-height: 90px;
   list-style-type: none;
   position: relative;
 
@@ -36,7 +38,7 @@ li:hover {
 
 
 .calendar {
-  width: 560px;
+  width: 630px;
   font-family: Arial, Helvetica, sans-serif;
     overflow:hidden;
 }
@@ -102,15 +104,20 @@ li:hover {
 
   span {
     display: inline-block;
-    width: 20px;
+    width: 30px;
     padding-left: 15px;
   }
 
   li {
-    display: none;
     position: relative;
     top: unset;
     left: 0px;
+    width: 100%;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    border-left-style: solid;
+    border-left-width: 7px;
+    border-color: rgb(22, 128, 214);
   }
 
   li:hover {
@@ -121,11 +128,12 @@ li:hover {
     border-radius: unset;
   }
 
-  .header {
-    text-align: left;
-  }
   body {
     overflow:hidden
+  }
+
+  .calendar {
+    width: 100%;
   }
   .container {
     background-color: unset;
@@ -134,13 +142,8 @@ li:hover {
 
   .mark {
     display: inline-block;
-    width: 100%;
     text-align: left;
-    border-bottom-style: solid;
-    border-bottom-width: thin;
-    border-left-style: solid;
-    border-left-width: 7px;
-    border-color: #C3DDF3;
+
   }
 
   .mark::before {
