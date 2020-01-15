@@ -86,12 +86,11 @@ const App: FC = () => {
   // init page
   useEffect(() => {
     toggleMonth(0)
-    console.log('test count', selectedDate, ' ', format(new Date(), 'dd MMMM yyyy'))
     // TODO please fix this
   }, [])
 
 
-  
+
   // month cal TODO too many call
   const calMonth = () => {
     let monthDate = []
@@ -123,30 +122,32 @@ const App: FC = () => {
     }
     for (let i = 0; i < 7 - emptyDate.length; i++) {
       let tempDate = curDate
+      let task = tasks.find(e => (e.id === format(new Date(2020, curMonth, tempDate), 'dd MMMM yyyy')))
       curWeek.push(
         // Todo mark
         <li
           key={monthList[curMonth] + '-date-' + curDate}
-          className={tasks.find(e => (e.id === format(new Date(2020, curMonth, tempDate), 'dd MMMM yyyy'))) ? "mark" : ""}
-          onClick={() => handleClickDate(tempDate, curMonth)
-          }><span>{curDate}</span><span className="tooltip-text">Chinese New Year</span></li>
+          className={task && task.description.length > 0 ? "mark" : ""}
+          onClick={() => handleClickDate(tempDate, curMonth)}>
+          <span>{curDate}</span>
+          <span className="tooltip-text">{task?.description}</span></li>
       )
       curDate += 1
     }
     week.push(<ul key={monthList[curMonth] + '-week-' + week.length + 1} className={classes.firstWeek}>{curWeek}</ul>)
     while (curDate < lastDate) {
       curWeek = []
-      let desc = tasks.find(e => e.id === selectedDate)?.description
-      if (!desc || desc === undefined) desc = ""
       for (let i = 0; i < 7 && curDate < lastDate; i++) {
         let tempDate = curDate
+        let task = tasks.find(e => (e.id === format(new Date(2020, curMonth, tempDate), 'dd MMMM yyyy')))
         curWeek.push(
           // Todo mark
           <li
             key={monthList[curMonth] + '-date-' + curDate}
-            className={tasks.find(e => (e.id === format(new Date(2020, curMonth, tempDate), 'dd MMMM yyyy'))) ? "mark" : ""}
-            onClick={() => handleClickDate(tempDate, curMonth) }
-          ><span>{curDate}</span><span className="tooltip-text">{desc}</span></li>
+            className={task && task.description.length > 0 ? "mark" : ""}
+            onClick={() => handleClickDate(tempDate, curMonth)}>
+            <span>{curDate}</span>
+            <span className="tooltip-text">{task?.description}</span></li>
         )
         curDate += 1
       }
@@ -164,18 +165,33 @@ const App: FC = () => {
   }
 
   const addTask = (taskData: Pick<TodoTask, 'description'>) => {
-    console.log(selectedDate)
-    setTasks([
-      ...tasks,
-      {
-        ...taskData,
+
+    let newArr = [...tasks]
+    let newArrIndex = newArr.map(e => { return e.id })
+    let indexZ = newArrIndex.indexOf(selectedDate)
+    if (newArr.find(e => (e.id === selectedDate))?.description !== undefined) {
+      newArr[indexZ] = {
+        description: taskData.description,
         id: selectedDate,
         createdAt: '',
         isDone: false,
         marked: true
-      },
-    ]);
-    console.log(tasks)
+      }
+      setTasks(newArr)
+    } else {
+      setTasks([
+        ...tasks,
+        {
+          description: taskData.description,
+          id: selectedDate,
+          createdAt: '',
+          isDone: false,
+          marked: true
+        },
+      ]);
+    }
+    console.log(taskData, tasks)
+
     setIsDialogOpen(false)
   };
 
@@ -184,11 +200,10 @@ const App: FC = () => {
     setIsDialogOpen(true)
   }
   const alltestMonth = calMonth()
-
   return (
     <div className="calendar">
       <AppBar position="static" className={classes.calendarHeader}>
-        <Toolbar  className={classes.calendarHeader}>
+        <Toolbar className={classes.calendarHeader}>
           <ArrowBackIosIcon className={backDisabled ? classes.hiddenButton : classes.calendarBack} onClick={() => { toggleMonth(-1) }} />
           <Typography variant="h6">
             <div className={classes.calendarHeaderContent}>{monthList[monthIndex]} 2020</div>
@@ -204,6 +219,7 @@ const App: FC = () => {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         onSave={addTask}
+        currentDesc={tasks.find(e => (e.id === selectedDate))?.description|| ''}
         selectedDate={selectedDate}
       />
     </div>

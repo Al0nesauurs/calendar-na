@@ -26,10 +26,11 @@ interface CalendarDialogProps {
   onClose: () => void;
   onSave: (data: { description: string }) => void;
   selectedDate: string;
+  currentDesc: string;
 }
 
 const CalendarDialog: FC<CalendarDialogProps> = props => {
-  const { isOpen, onClose, onSave, selectedDate } = props;
+  const { isOpen, onClose, onSave, selectedDate, currentDesc } = props;
   const classes = useStyles(props);
   const [description, setDescription] = useState('');
 
@@ -41,7 +42,7 @@ const CalendarDialog: FC<CalendarDialogProps> = props => {
       classes={{ paper: classes.dialog }}
       open={isOpen}
       onEnter = {() => {
-        setDescription('')
+        setDescription(currentDesc)
       }}
     >
       <AppBar position="static">
