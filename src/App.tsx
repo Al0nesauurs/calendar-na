@@ -44,18 +44,20 @@ const App: FC = () => {
       visibility: "hidden"
     },
     monthStyle: {
-      visibility: "visible",
-      position: "fixed",
+      position: "relative",
       backgroundColor: "#C3DEF9",
       display: "inline",
     },
     monthStyleHidden: {
       position: "fixed",
-      display: "inline",
+      display: "none",
       visibility: "hidden"
     },
     firstWeek: {
       justifyContent: 'flex-end'
+    },
+    botAppBar: {
+      display: "none"
     }
   }));
   const classes = useStyles();
@@ -93,7 +95,7 @@ const App: FC = () => {
       let dayOfStartMonth = format(startOfMonth(new Date(2020, i, 1)), 'iii')
       let dateEndOfMonth = getDate(endOfMonth(new Date(2020, i, 1)))
       monthDate.push(
-        <div key={monthList[i]} className={(monthIndex === i ? classes.monthStyle : classes.monthStyleHidden)+ ' container'}>
+        <div key={monthList[i]} className={(monthIndex === i ? classes.monthStyle : classes.monthStyleHidden) + ' container'}>
           {calWeek(i, dayOfStartMonth, dateEndOfMonth)}
         </div>
       )
@@ -212,9 +214,18 @@ const App: FC = () => {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         onSave={addTask}
-        currentDesc={tasks.find(e => (e.id === selectedDate))?.description|| ''}
+        currentDesc={tasks.find(e => (e.id === selectedDate))?.description || ''}
         selectedDate={selectedDate}
       />
+      <AppBar className="botAppBar" position="static">
+        <Toolbar className={classes.calendarHeader}>
+          <ArrowBackIosIcon className={backDisabled ? classes.hiddenButton : classes.calendarBack} onClick={() => { toggleMonth(-1) }} />
+          <Typography variant="h6">
+            <div className={classes.calendarHeaderContent}>{monthList[monthIndex]} 2020</div>
+          </Typography>
+          <ArrowForwardIosIcon className={nextDisabled ? classes.hiddenButton : classes.calendarNext} onClick={() => { toggleMonth(1) }} />
+        </Toolbar>
+      </AppBar>
     </div>
   );
 }
