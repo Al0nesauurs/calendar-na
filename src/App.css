@@ -18,7 +18,6 @@ li {
   line-height: 90px;
   list-style-type: none;
   position: relative;
-
 }
 
 li:hover {
@@ -39,7 +38,7 @@ li:hover {
 
 
 .calendar {
-  width: 630px;
+  width: 650px;
 }
 
 
@@ -50,6 +49,10 @@ li:hover {
 
 .container {
   background-color: #C3DEF9;
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+  padding: 10px;
 }
 
 .mark::before {
@@ -83,11 +86,6 @@ li:hover {
   padding: 0px 10px 0px;
 }
 
-.today {
-  background-color: #9FCCFA;
-  font-weight: bold;
-  border-radius: 50%;
-}
 .MuiAppBar-root.botAppBar {
   display: none;
 }
@@ -133,7 +131,9 @@ li:hover {
   }
 
   .container {
-    height: 100%;
+    width: 100%;
+    display: inline;
+    padding: 0%;
   }
 
   .mark {

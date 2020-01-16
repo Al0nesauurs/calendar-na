@@ -46,7 +46,9 @@ const App: FC = () => {
     monthStyle: {
       position: "relative",
       backgroundColor: "#C3DEF9",
-      display: "inline",
+      display: "table",
+      margin: "auto",
+      width: "100%",
     },
     monthStyleHidden: {
       position: "fixed",
@@ -95,7 +97,7 @@ const App: FC = () => {
       let dayOfStartMonth = format(startOfMonth(new Date(2020, i, 1)), 'iii')
       let dateEndOfMonth = getDate(endOfMonth(new Date(2020, i, 1)))
       monthDate.push(
-        <div key={monthList[i]} className={(monthIndex === i ? classes.monthStyle : classes.monthStyleHidden) + ' container'}>
+        <div key={monthList[i]} className={(monthIndex === i ? classes.monthStyle : classes.monthStyleHidden)}>
           {calWeek(i, dayOfStartMonth, dateEndOfMonth)}
         </div>
       )
