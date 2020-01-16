@@ -1,4 +1,3 @@
-
 ul {
   display: flex;
   padding: 0px;
@@ -131,7 +130,6 @@ li:hover {
   }
 
   .container {
-    width: 100%;
     display: inline;
     padding: 0%;
   }
@@ -158,6 +156,7 @@ li:hover {
     left: unset;
 
   }
+
   .MuiAppBar-root.botAppBar {
     visibility: visible;
     display: inline-flex;

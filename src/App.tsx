@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useCallback } from 'react';
 import './App.css';
 import { format, getDate, getMonth, startOfMonth, endOfMonth } from 'date-fns'
 import { makeStyles } from '@material-ui/core/styles';
@@ -21,7 +21,7 @@ const App: FC = () => {
   const [backDisabled, setBackDisabled] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState('')
-  const [tasks, setTasks] = useState<TodoTask[]>([])
+  const [descriptionList, setDescriptionList] = useState<DescriptionCal[]>([])
 
   const useStyles = makeStyles(theme => ({
     calendarHeader: {
@@ -68,11 +68,9 @@ const App: FC = () => {
   const monthList = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
   const DayList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-  interface TodoTask {
+  interface DescriptionCal {
     id: string;
     description: string;
-    isDone: boolean;
-    createdAt: string;
     marked: boolean
   }
 
@@ -91,7 +89,6 @@ const App: FC = () => {
     }
   }
 
-  // month cal TODO too many call
   const calMonth = () => {
     let monthDate = []
     for (let i = 0; i < 12; i++) {
@@ -106,47 +103,32 @@ const App: FC = () => {
     return monthDate
   }
 
-  // input eg Mon, TUe
+  // input eg Mon, Tue
   const calWeek = (curMonth: number, day: string, lastDate: number) => {
     lastDate += 1
-    let curDate = 1
-    let emptyDate = []
+    let curDate = 1 // date runner
+    let emptySpace = []
     let curWeek = []
     let week = []
+
+    //////////////////////// First week Generate ////////////////////////
     for (let i = 0; i < DayList.indexOf(day); i++) {
       // if sunday = no free li if Tue = 2 free li
-      emptyDate.push(
+      emptySpace.push(
         <li key={'space-' + i}></li>
       )
     }
-    for (let i = 0; i < 7 - emptyDate.length; i++) {
-      let tempDate = curDate
-      let task = tasks.find(e => (e.id === format(new Date(2020, curMonth, tempDate), 'dd MMMM yyyy')))
-      curWeek.push(
-        <li
-          key={monthList[curMonth] + '-date-' + curDate}
-          className={task && task.description.length > 0 ? "mark" : ""}
-          onClick={() => handleClickDate(tempDate, curMonth)}>
-          <span>{curDate}</span>
-          <span className="tooltip-text">{task?.description}</span></li>
-      )
+    for (let i = 0; i < 7 - emptySpace.length; i++) {
+      curWeek.push(calDate(curDate, curMonth))
       curDate += 1
     }
     week.push(<ul key={monthList[curMonth] + '-week-' + week.length + 1} className={classes.firstWeek}>{curWeek}</ul>)
+    //////////////////////// First week Generate ////////////////////////
+
     while (curDate < lastDate) {
       curWeek = []
       for (let i = 0; i < 7 && curDate < lastDate; i++) {
-        let tempDate = curDate
-        let task = tasks.find(e => (e.id === format(new Date(2020, curMonth, tempDate), 'dd MMMM yyyy')))
-        curWeek.push(
-          // Todo mark
-          <li
-            key={monthList[curMonth] + '-date-' + curDate}
-            className={task && task.description.length > 0 ? "mark" : ""}
-            onClick={() => handleClickDate(tempDate, curMonth)}>
-            <span>{curDate}</span>
-            <span className="tooltip-text">{task?.description}</span></li>
-        )
+        curWeek.push(calDate(curDate, curMonth))
         curDate += 1
       }
       week.push(<ul key={monthList[curMonth] + '-week-' + week.length + 1}>{curWeek}</ul>)
@@ -154,46 +136,51 @@ const App: FC = () => {
     return week
   }
 
-  const addTask = (taskData: Pick<TodoTask, 'description'>) => {
+  function calDate (curDate:number, curMonth:number) {
+    let task = descriptionList.find(e => (e.id === format(new Date(2020, curMonth, curDate), 'dd MMMM yyyy')))
+    return (
+      <li
+        key={monthList[curMonth] + '-date-' + curDate}
+        className={task && task.description.length > 0 ? "mark" : ""}
+        onClick={() => handleClickDate(curDate, curMonth)}>
+        <span>{curDate}</span>
+        <span className="tooltip-text">{task?.description}</span></li>
+    )
+  }
 
-    let newArr = [...tasks]
-    let newArrIndex = newArr.map(e => { return e.id })
-    let indexZ = newArrIndex.indexOf(selectedDate)
-    if (newArr.find(e => (e.id === selectedDate))?.description !== undefined) {
-      newArr[indexZ] = {
+  const saveDescriptionList = (taskData: Pick<DescriptionCal, 'description'>) => {
+
+    let newDescriptionList = [...descriptionList]
+    let newDescription = newDescriptionList.map(e => { return e.id })
+    let indexSelectedDescription = newDescription.indexOf(selectedDate)
+    if (newDescriptionList.find(e => (e.id === selectedDate))?.description !== undefined) {
+      newDescriptionList[indexSelectedDescription] = {
         description: taskData.description,
         id: selectedDate,
-        createdAt: '',
-        isDone: false,
         marked: true
       }
-      setTasks(newArr)
+      setDescriptionList(newDescriptionList)
     } else {
-      setTasks([
-        ...tasks,
+      setDescriptionList([
+        ...descriptionList,
         {
           description: taskData.description,
           id: selectedDate,
-          createdAt: '',
-          isDone: false,
           marked: true
         },
       ]);
     }
-    console.log(taskData, tasks)
-
     setIsDialogOpen(false)
   };
 
-  function handleClickDate(date: number, month: number) {
+  const handleClickDate= useCallback((date: number, month: number) => {
     setSelectedDate(format(new Date(2020, month, date), 'dd MMMM yyyy'))
     setIsDialogOpen(true)
-  }
+  },[])
 
   // init page
   useEffect(() => {
     toggleMonth(0)
-    // TODO please fix this
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -215,8 +202,8 @@ const App: FC = () => {
       <CalendarDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        onSave={addTask}
-        currentDesc={tasks.find(e => (e.id === selectedDate))?.description || ''}
+        onSave={saveDescriptionList}
+        currentDesc={descriptionList.find(e => (e.id === selectedDate))?.description || ''}
         selectedDate={selectedDate}
       />
       <AppBar className="botAppBar" position="static">
