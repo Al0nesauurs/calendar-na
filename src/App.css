@@ -1,3 +1,4 @@
+
 ul {
   display: flex;
   padding: 0px;
@@ -39,7 +40,6 @@ li:hover {
 
 .calendar {
   width: 630px;
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 

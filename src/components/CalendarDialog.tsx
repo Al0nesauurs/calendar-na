@@ -52,14 +52,13 @@ const CalendarDialog: FC<CalendarDialogProps> = props => {
       </AppBar>
       <div className={classes.dialogContent}>
         <TextField
+          autoFocus
           fullWidth
           multiline
           label="Description"
-          margin="normal"
           onChange={updateDescription}
-          rows="4"
           value={description}
-          variant="outlined"
+          inputProps={{ maxLength: 40 }}
         />
         <div className={classes.buttonContainer}>
           <Button color="primary" onClick={onClose}>
