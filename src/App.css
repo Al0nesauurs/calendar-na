@@ -95,12 +95,10 @@ li:hover {
 @media screen and (max-width: 600px) {
 
   ul {
-    margin: 0;
-    padding: 0;
     display: inline;
   }
 
-  span {
+  li span {
     display: inline-block;
     width: 30px;
     padding-left: 15px;
