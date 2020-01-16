@@ -20,7 +20,7 @@ const App: FC = () => {
   const [nextDisabled, setNextDisabled] = useState(false)
   const [backDisabled, setBackDisabled] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState()
+  const [selectedDate, setSelectedDate] = useState('')
   const [tasks, setTasks] = useState<TodoTask[]>([])
 
   const useStyles = makeStyles(theme => ({
@@ -62,12 +62,21 @@ const App: FC = () => {
       display: "none"
     }
   }));
-  const classes = useStyles();
+
 
   // Date Constant
   const monthList = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
   const DayList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
+  interface TodoTask {
+    id: string;
+    description: string;
+    isDone: boolean;
+    createdAt: string;
+    marked: boolean
+  }
+
+  const classes = useStyles();
   const toggleMonth = (itr: number) => {
     setMonthIndex(monthIndex + itr)
     if (monthIndex + itr < 1) {
@@ -81,14 +90,6 @@ const App: FC = () => {
       setNextDisabled(false)
     }
   }
-
-  // init page
-  useEffect(() => {
-    toggleMonth(0)
-    // TODO please fix this
-  }, [])
-
-
 
   // month cal TODO too many call
   const calMonth = () => {
@@ -106,7 +107,7 @@ const App: FC = () => {
   }
 
   // input eg Mon, TUe
-  function calWeek(curMonth: number, day: string, lastDate: number) {
+  const calWeek = (curMonth: number, day: string, lastDate: number) => {
     lastDate += 1
     let curDate = 1
     let emptyDate = []
@@ -153,14 +154,6 @@ const App: FC = () => {
     return week
   }
 
-  interface TodoTask {
-    id: string;
-    description: string;
-    isDone: boolean;
-    createdAt: string;
-    marked: boolean
-  }
-
   const addTask = (taskData: Pick<TodoTask, 'description'>) => {
 
     let newArr = [...tasks]
@@ -196,7 +189,14 @@ const App: FC = () => {
     setSelectedDate(format(new Date(2020, month, date), 'dd MMMM yyyy'))
     setIsDialogOpen(true)
   }
-  const alltestMonth = calMonth()
+
+  // init page
+  useEffect(() => {
+    toggleMonth(0)
+    // TODO please fix this
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <div className="calendar">
       <AppBar position="static">
@@ -210,7 +210,7 @@ const App: FC = () => {
       </AppBar>
 
       <div className="container">
-        {alltestMonth}
+        {calMonth()}
       </div>
       <CalendarDialog
         isOpen={isDialogOpen}
