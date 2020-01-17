@@ -4,17 +4,18 @@ import DateComponenet from './DateComponent'
 
 
 interface WeekComponentProps {
-  DayList: any;
+  dayList: any;
   monthList: any;
   curMonth: any;
   day: any;
   lastDate: number;
   descriptionList: any;
+  todayYear: any;
   handleClickDate: any
 }
 
 const WeekComponent: FC<WeekComponentProps> = props => {
-  let { DayList, monthList, curMonth, day, lastDate, descriptionList, handleClickDate } = props;
+  let { dayList, monthList, curMonth, todayYear, day, lastDate, descriptionList, handleClickDate } = props;
   const useStyles = makeStyles(theme => ({
     firstWeek: {
       justifyContent: 'flex-end'
@@ -29,7 +30,7 @@ const WeekComponent: FC<WeekComponentProps> = props => {
   let week = []
 
   //////////////////////// First week Generate ////////////////////////
-  for (let i = 0; i < DayList.indexOf(day); i++) {
+  for (let i = 0; i < dayList.indexOf(day); i++) {
     // if sunday = no free li if Tue = 2 free li
     emptySpace.push(
       <li key={'space-' + i}></li>
@@ -42,6 +43,7 @@ const WeekComponent: FC<WeekComponentProps> = props => {
       curDate={curDate}
       descriptionList={descriptionList}
       handleClickDate={handleClickDate}
+      todayYear={todayYear}
       key={monthList[curMonth] + '-date-' + curDate}
 
     />
@@ -60,6 +62,7 @@ const WeekComponent: FC<WeekComponentProps> = props => {
         curDate={curDate}
         descriptionList={descriptionList}
         handleClickDate={handleClickDate}
+        todayYear={todayYear}
         key={monthList[curMonth] + '-date-' + curDate}
       />
       )

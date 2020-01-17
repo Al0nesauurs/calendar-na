@@ -5,9 +5,10 @@ import WeekComponent from './WeekComponent'
 
 
 interface MonthComponentProps {
-  DayList: any;
+  dayList: any;
   monthList: any;
   monthIndex: any;
+  todayYear: any;
   descriptionList: any;
   handleClickDate: any;
 }
@@ -28,19 +29,20 @@ const MonthComponent: FC<MonthComponentProps> = props => {
       visibility: "hidden"
     },
   }));
-  const { DayList, monthList, monthIndex, descriptionList, handleClickDate } = props;
+  const { dayList, monthList, todayYear, monthIndex, descriptionList, handleClickDate } = props;
   const classes = useStyles(props);
 
   let monthDate = []
   for (let i = 0; i < 12; i++) {
-    let dayOfStartMonth = format(startOfMonth(new Date(2020, i, 1)), 'iii')
-    let dateEndOfMonth: number = getDate(endOfMonth(new Date(2020, i, 1)))
+    let dayOfStartMonth = format(startOfMonth(new Date(todayYear, i, 1)), 'iii')
+    let dateEndOfMonth: number = getDate(endOfMonth(new Date(todayYear, i, 1)))
     monthDate.push(
       <div key={monthList[i]} className={(monthIndex === i ? classes.monthStyle : classes.monthStyleHidden)}>
         {(<WeekComponent
-          DayList={DayList}
+          dayList={dayList}
           monthList={monthList}
           curMonth={i}
+          todayYear={todayYear}
           day={dayOfStartMonth}
           lastDate={dateEndOfMonth}
           descriptionList={descriptionList}

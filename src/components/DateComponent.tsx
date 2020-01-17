@@ -1,10 +1,10 @@
 import React from 'react'
 import { format } from 'date-fns'
 
-const DateComponenet = (props: { monthList: any; curMonth: any; curDate: any; descriptionList: any; handleClickDate: any; }) => {
-  let { curMonth, curDate, descriptionList, handleClickDate } = props;
+const DateComponenet = (props: { monthList: any; curMonth: any; curDate: any; descriptionList: any; handleClickDate: any; todayYear:any }) => {
+  let { curMonth, curDate, descriptionList, handleClickDate, todayYear } = props;
 
-  let task = descriptionList.find((e: { id: string; }) => (e.id === format(new Date(2020, curMonth, curDate), 'dd MMMM yyyy')))
+  let task = descriptionList.find((e: { id: string; }) => (e.id === format(new Date(todayYear, curMonth, curDate), 'dd MMMM yyyy')))
   return (
     <li
       className={task && task.description.length > 0 ? "mark" : ""}

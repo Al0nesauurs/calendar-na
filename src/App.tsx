@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback } from 'react';
 import './App.css';
-import { format, getMonth } from 'date-fns'
+import { format, getMonth, getYear } from 'date-fns'
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -15,7 +15,7 @@ const App: FC = () => {
 
   // Get current date
   let todayMonth = getMonth(new Date())
-
+  let todayYear = getYear(new Date())
   // Use state part
   const [monthIndex, setMonthIndex] = useState(todayMonth)
   const [nextDisabled, setNextDisabled] = useState(false)
@@ -52,7 +52,7 @@ const App: FC = () => {
 
   // Date Constant
   const monthList = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-  const DayList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  const dayList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
   interface DescriptionCal {
     id: string;
@@ -101,7 +101,7 @@ const App: FC = () => {
   };
 
   const handleClickDate = useCallback((date: number, month: number) => {
-    setSelectedDate(format(new Date(2020, month, date), 'dd MMMM yyyy'))
+    setSelectedDate(format(new Date(todayYear, month, date), 'dd MMMM yyyy'))
     setIsDialogOpen(true)
   }, [])
 
@@ -117,7 +117,7 @@ const App: FC = () => {
         <Toolbar className={classes.calendarHeader}>
           <ArrowBackIosIcon className={backDisabled ? classes.hiddenButton : classes.calendarBack} onClick={() => { toggleMonth(-1) }} />
           <Typography variant="h6">
-            <div className={classes.calendarHeaderContent}>{monthList[monthIndex]} 2020</div>
+            <div className={classes.calendarHeaderContent}>{monthList[monthIndex]} {todayYear}</div>
           </Typography>
           <ArrowForwardIosIcon className={nextDisabled ? classes.hiddenButton : classes.calendarNext} onClick={() => { toggleMonth(1) }} />
         </Toolbar>
@@ -125,10 +125,11 @@ const App: FC = () => {
 
       <div className="container">
         <MonthComponent
-          DayList={DayList}
+          dayList={dayList}
           monthList={monthList}
           monthIndex={monthIndex}
           descriptionList={descriptionList}
+          todayYear={todayYear}
           handleClickDate={handleClickDate}
         />
       </div>
@@ -143,7 +144,7 @@ const App: FC = () => {
         <Toolbar className={classes.calendarHeader}>
           <ArrowBackIosIcon className={backDisabled ? classes.hiddenButton : classes.calendarBack} onClick={() => { toggleMonth(-1) }} />
           <Typography variant="h6">
-            <div className={classes.calendarHeaderContent}>{monthList[monthIndex]} 2020</div>
+            <div className={classes.calendarHeaderContent}>{monthList[monthIndex]} {todayYear}</div>
           </Typography>
           <ArrowForwardIosIcon className={nextDisabled ? classes.hiddenButton : classes.calendarNext} onClick={() => { toggleMonth(1) }} />
         </Toolbar>
