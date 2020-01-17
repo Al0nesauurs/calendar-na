@@ -1,8 +1,8 @@
 import React from 'react'
 import { format } from 'date-fns'
 
-const DateComponenet = (props: { monthList: any; curMonth: any; curDate: any; descriptionList: any; handleClickDate: any; todayYear:any }) => {
-  let { curMonth, curDate, descriptionList, handleClickDate, todayYear } = props;
+const DateComponenet = (props: { monthList: any; curMonth: any; curDate: any; descriptionList: any; handleClickDate: any; todayYear: any }) => {
+  let { curMonth, curDate, todayYear, descriptionList, handleClickDate } = props;
 
   let task = descriptionList.find((e: { id: string; }) => (e.id === format(new Date(todayYear, curMonth, curDate), 'dd MMMM yyyy')))
   return (

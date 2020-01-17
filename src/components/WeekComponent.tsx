@@ -15,7 +15,7 @@ interface WeekComponentProps {
 }
 
 const WeekComponent: FC<WeekComponentProps> = props => {
-  let { dayList, monthList, curMonth, todayYear, day, lastDate, descriptionList, handleClickDate } = props;
+  let { dayList, monthList, todayYear, curMonth, day, lastDate, descriptionList, handleClickDate } = props;
   const useStyles = makeStyles(theme => ({
     firstWeek: {
       justifyContent: 'flex-end'
