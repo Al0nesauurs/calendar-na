@@ -42,6 +42,8 @@ const WeekComponent: FC<WeekComponentProps> = props => {
       curDate={curDate}
       descriptionList={descriptionList}
       handleClickDate={handleClickDate}
+      key={monthList[curMonth] + '-date-' + curDate}
+
     />
     )
     curDate += 1
@@ -58,6 +60,7 @@ const WeekComponent: FC<WeekComponentProps> = props => {
         curDate={curDate}
         descriptionList={descriptionList}
         handleClickDate={handleClickDate}
+        key={monthList[curMonth] + '-date-' + curDate}
       />
       )
       curDate += 1
