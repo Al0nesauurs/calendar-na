@@ -80,22 +80,26 @@ const App: FC = () => {
     let newDescriptionList = [...descriptionList]
     let newDescription = newDescriptionList.map(e => { return e.id })
     let indexSelectedDescription = newDescription.indexOf(selectedDate)
-    if (newDescriptionList.find(e => (e.id === selectedDate))?.description !== undefined) {
-      newDescriptionList[indexSelectedDescription] = {
-        description: taskData.description,
-        id: selectedDate,
-        marked: true
-      }
-      setDescriptionList(newDescriptionList)
+    if (taskData.description.replace(/\s/g, '').length <= 0) {
+      // do nothing if only space
     } else {
-      setDescriptionList([
-        ...descriptionList,
-        {
+      if (newDescriptionList.find(e => (e.id === selectedDate))?.description !== undefined) {
+        newDescriptionList[indexSelectedDescription] = {
           description: taskData.description,
           id: selectedDate,
           marked: true
-        },
-      ]);
+        }
+        setDescriptionList(newDescriptionList)
+      } else {
+        setDescriptionList([
+          ...descriptionList,
+          {
+            description: taskData.description,
+            id: selectedDate,
+            marked: true
+          },
+        ]);
+      }
     }
     setIsDialogOpen(false)
   };
