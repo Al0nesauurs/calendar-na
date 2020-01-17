@@ -41,7 +41,7 @@ const CalendarDialog: FC<CalendarDialogProps> = props => {
     <Dialog
       classes={{ paper: classes.dialog }}
       open={isOpen}
-      onEnter = {() => {
+      onEnter={() => {
         setDescription(currentDesc)
       }}
     >

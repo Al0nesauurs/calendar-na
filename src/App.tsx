@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback } from 'react';
 import './App.css';
-import { format, getDate, getMonth, startOfMonth, endOfMonth } from 'date-fns'
+import { format, getMonth } from 'date-fns'
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
 
 import CalendarDialog from './components/CalendarDialog';
+import MonthComponent from './components/MonthComponent'
 
 const App: FC = () => {
 
@@ -43,21 +44,6 @@ const App: FC = () => {
     hiddenButton: {
       visibility: "hidden"
     },
-    monthStyle: {
-      position: "relative",
-      backgroundColor: "#C3DEF9",
-      display: "table",
-      margin: "auto",
-      width: "100%",
-    },
-    monthStyleHidden: {
-      position: "fixed",
-      display: "none",
-      visibility: "hidden"
-    },
-    firstWeek: {
-      justifyContent: 'flex-end'
-    },
     botAppBar: {
       display: "none"
     }
@@ -89,65 +75,6 @@ const App: FC = () => {
     }
   }
 
-  const calMonth = () => {
-    let monthDate = []
-    for (let i = 0; i < 12; i++) {
-      let dayOfStartMonth = format(startOfMonth(new Date(2020, i, 1)), 'iii')
-      let dateEndOfMonth = getDate(endOfMonth(new Date(2020, i, 1)))
-      monthDate.push(
-        <div key={monthList[i]} className={(monthIndex === i ? classes.monthStyle : classes.monthStyleHidden)}>
-          {calWeek(i, dayOfStartMonth, dateEndOfMonth)}
-        </div>
-      )
-    }
-    return monthDate
-  }
-
-  // input eg Mon, Tue
-  const calWeek = (curMonth: number, day: string, lastDate: number) => {
-    lastDate += 1
-    let curDate = 1 // date runner
-    let emptySpace = []
-    let curWeek = []
-    let week = []
-
-    //////////////////////// First week Generate ////////////////////////
-    for (let i = 0; i < DayList.indexOf(day); i++) {
-      // if sunday = no free li if Tue = 2 free li
-      emptySpace.push(
-        <li key={'space-' + i}></li>
-      )
-    }
-    for (let i = 0; i < 7 - emptySpace.length; i++) {
-      curWeek.push(calDate(curDate, curMonth))
-      curDate += 1
-    }
-    week.push(<ul key={monthList[curMonth] + '-week-' + week.length + 1} className={classes.firstWeek}>{curWeek}</ul>)
-    //////////////////////// First week Generate ////////////////////////
-
-    while (curDate < lastDate) {
-      curWeek = []
-      for (let i = 0; i < 7 && curDate < lastDate; i++) {
-        curWeek.push(calDate(curDate, curMonth))
-        curDate += 1
-      }
-      week.push(<ul key={monthList[curMonth] + '-week-' + week.length + 1}>{curWeek}</ul>)
-    }
-    return week
-  }
-
-  function calDate (curDate:number, curMonth:number) {
-    let task = descriptionList.find(e => (e.id === format(new Date(2020, curMonth, curDate), 'dd MMMM yyyy')))
-    return (
-      <li
-        key={monthList[curMonth] + '-date-' + curDate}
-        className={task && task.description.length > 0 ? "mark" : ""}
-        onClick={() => handleClickDate(curDate, curMonth)}>
-        <span>{curDate}</span>
-        <span className="tooltip-text">{task?.description}</span></li>
-    )
-  }
-
   const saveDescriptionList = (taskData: Pick<DescriptionCal, 'description'>) => {
 
     let newDescriptionList = [...descriptionList]
@@ -173,10 +100,10 @@ const App: FC = () => {
     setIsDialogOpen(false)
   };
 
-  const handleClickDate= useCallback((date: number, month: number) => {
+  const handleClickDate = useCallback((date: number, month: number) => {
     setSelectedDate(format(new Date(2020, month, date), 'dd MMMM yyyy'))
     setIsDialogOpen(true)
-  },[])
+  }, [])
 
   // init page
   useEffect(() => {
@@ -197,7 +124,13 @@ const App: FC = () => {
       </AppBar>
 
       <div className="container">
-        {calMonth()}
+        <MonthComponent
+          DayList={DayList}
+          monthList={monthList}
+          monthIndex={monthIndex}
+          descriptionList={descriptionList}
+          handleClickDate={handleClickDate}
+        />
       </div>
       <CalendarDialog
         isOpen={isDialogOpen}
